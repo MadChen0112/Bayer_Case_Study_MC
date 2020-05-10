@@ -19,16 +19,16 @@ from sklearn.model_selection import cross_val_score
 # PART 3 OF 3 : MODELING
 
 # 1. Split into train and test sets, 7:3
-df = pd.read_csv('Modeling_df.csv',index_col=0)
+df = pd.read_csv('Modeling_df.csv')
 # df = df.drop(['v25'],axis=1)  # attribute v25 is very important to the model, apparently. So cannot drop the column with most remaining NAs.
 df = df.dropna()
 print("df shape after",df.shape)
-y = df.iloc[:,0]    #target column i.e price range
-X = df.iloc[:,1:]    #independent columns
+y = df['has_applied']    # dependent variable
+X = df[df.columns[-214:]]    # independent variables
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=4,shuffle=True)
 print("Labels counter y train",Counter(y_train)) # imbalanced 1:0 ratios...about 3:1
-
+print("Labels counter y test",Counter(y_test))
 # 2. Oversampling label 0s to balance training dataset
 
 oversampler = RandomOverSampler(sampling_strategy='minority')
@@ -40,7 +40,7 @@ print("Oversampled y_train",Counter(y_train_over)) # now has_applied labels are 
 
 # ML algorithms for model vector
 knn = KNeighborsClassifier(n_neighbors=10)
-logr = LogisticRegression(max_iter=180,C=2.5)
+logr = LogisticRegression(max_iter=200, C=2.5)
 lda = LinearDiscriminantAnalysis()
 rf = RandomForestClassifier()
 xgb = XGBClassifier()
@@ -123,22 +123,21 @@ pyplot.legend()
 pyplot.title('ROC curves when LR is tuned and untuned')
 pyplot.show()
 
-
 # K fold cross validation (just as a comparison measure)
-names,results, results_test=[],[],[]
-for model,alg_name in itertools.zip_longest(model_vector,alg_name_for_plot):
-    kfold = StratifiedKFold(n_splits=10, shuffle=True)
-    cv_results = cross_val_score(model, X_train_over, y_train_over, cv=kfold, scoring='roc_auc')
-    results.append(round(cv_results.mean(),2))
-    print('{} kfold cross-validation AUC : {}'.format (str(alg_name), cv_results.mean()))
-
-    # predictions on test set
-    preds = model.predict(X_test)
-    print(roc_auc_score(y_test,preds))
-    results_test.append(round(roc_auc_score(y_test,preds),2))
-    print('#######################################')
-
-print("results vector",results_test)
+# names,results, results_test=[],[],[]
+# for model,alg_name in itertools.zip_longest(model_vector,alg_name_for_plot):
+#     kfold = StratifiedKFold(n_splits=10, shuffle=True)
+#     cv_results = cross_val_score(model, X_train_over, y_train_over, cv=kfold, scoring='roc_auc')
+#     results.append(round(cv_results.mean(),2))
+#     print('{} kfold cross-validation AUC : {}'.format (str(alg_name), cv_results.mean()))
+#
+#     # predictions on test set
+#     preds = model.predict(X_test)
+#     print(roc_auc_score(y_test,preds))
+#     results_test.append(round(roc_auc_score(y_test,preds),2))
+#     print('#######################################')
+#
+# print("results vector",results_test)
 
 # LR tuning code (for hyperparameter tuning of final model)
 
