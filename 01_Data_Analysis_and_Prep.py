@@ -39,8 +39,9 @@ print("Applicants as per company",ones_comp)
 # Visualization of applicants as per company
 # Stacked bar chart for applicants as per company
 N = len(company_names)
-p1 = plt.bar(np.arange(N),ones_comp,width=0.5)
-p2 = plt.bar(np.arange(N),zeroes_comp,bottom=ones_comp,width=0.5)
+plt.figure(figsize=(5,4))
+p1 = plt.bar(np.arange(N),ones_comp,width=0.7)
+p2 = plt.bar(np.arange(N),zeroes_comp,bottom=ones_comp,width=0.7)
 plt.xticks(np.arange(N),company_names)
 for r1, r2 in zip(p1, p2):
     h1 = r1.get_height()
@@ -55,7 +56,8 @@ plt.show() # looks the same for everyone
 
 # Percentage application wise bar chart
 perc_app_by_comp = [round(a*100/(a+b),2) for a,b in zip(ones_comp,zeroes_comp)]
-p3 = plt.bar(np.arange(N),perc_app_by_comp,width=0.5)
+plt.figure(figsize=(5,4))
+p3 = plt.bar(np.arange(N),perc_app_by_comp,width=0.7)
 plt.xticks(np.arange(N),company_names)
 for r1 in p3:
     h1 = r1.get_height()
@@ -76,7 +78,8 @@ sal_prov = 2000-sal_not_prov
 lab_sal = 'Salary\n mentioned','Salary\nnot mentioned'
 p_sizes = [sal_prov, sal_not_prov]
 explode = (0,0.1)
-plt.pie(p_sizes, explode=explode,labels=lab_sal,autopct='%1.1f%%',shadow=True,startangle=90,colors=['green','red'])
+plt.figure(figsize=(3,3))
+plt.pie(p_sizes, explode=explode,labels=lab_sal,autopct='%1.1f%%',shadow=True,startangle=140,colors=['green','red'])
 plt.axis('equal')
 plt.title('Instances of salary \nmentioned in job listing')
 plt.show()# 30% of job ads mentioned salary
@@ -102,12 +105,12 @@ plt.tight_layout()
 plt.show() # 75% people applied when salary was mentioned as compared to 50% when not given.
 
 # Check 3 : Does the actual number matter when salary is mentioned? (Visualisation)
-
-sns.boxplot(x="has_applied",y="salary", data=df_s_given,palette=['darkorange','royalblue'])
+#plt.figure(figsize=(6,3.5))
+sns.boxplot(x="has_applied",y="salary", data=df_s_given,palette=['darkorange','royalblue'],width=0.6)
 plt.xticks([0,1],['not applied','applied'])
 plt.ylabel('Salary',fontsize=15)
 plt.xlabel('')
-plt.title('Application statistics when salary is given')
+plt.title('Application statistics when salary is mentioned')
 plt.show() # Actual number does not affect has_applied label
 
 # Conclusion for salary : Only the mention matters, not the number. Can treat as a categorical variable: salary_mentioned and salary_n_mentioned
@@ -142,7 +145,10 @@ min_max_percs_index = [perc_app_by_job.index(x) for x in min_max_percs]
 job_titl_for_plot = []
 
 for i in min_max_percs_index:
-    job_titl_for_plot.append(df['job_title_full'][i])
+    for j in range(0, 2000):
+        if df['job_title_full_cat'][j]==i:
+            job_titl_for_plot.append(df['job_title_full'][j])
+            break
 
 labels_minmax = [ '\n'.join(wrap(l, 20)) for l in job_titl_for_plot ]
 p4 = plt.bar(np.arange(len(min_max_percs)),min_max_percs,width=0.5)
@@ -151,7 +157,7 @@ for r1 in p4:
     plt.text(r1.get_x() + r1.get_width() / 2., h1 , "%d" % h1, ha="center", va="bottom", color="black", fontsize=10)
 plt.xticks(np.arange(len(min_max_percs)),labels_minmax)
 plt.title('Application percentage for job titles')
-plt.xlabel('Job titles'),plt.ylabel('Percentage applicants')
+plt.xlabel('Job titles'),plt.ylabel('Percentage applications')
 plt.ylim(0,100)
 plt.tight_layout()
 plt.show() #some jobs are more popularly applied for than others, so necessary to include in modelling
