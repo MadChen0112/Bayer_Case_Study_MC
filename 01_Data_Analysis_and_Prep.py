@@ -282,7 +282,7 @@ for name, importance in zip(list(df_user_attr_wo_na), rnd_clf.feature_importance
     print(name, "=", importance) # No user attributes are particularly important on their own.
 
 ###### END OF PART 1 OF 3 : DATA ANALYSIS ##############################
-###### NEXT PART : DUMMY VARIABLE CONCATENATION #########
+###### NEXT PART : DUMMY VARIABLE CONCATENATION ##########
 
 
 
